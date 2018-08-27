@@ -24,8 +24,316 @@
 	<body>
 		<div class="reveal">
 			<div class="slides">
-				<section>Slide 1</section>
-				<section>Slide 2</section>
+				<section data-markdown>
+					# Typescript teaser
+				</section>
+				<section data-markdown>
+					1. Typewhat?
+					2. Getting started
+					3. Language toure
+						* Variables
+						* Functions
+						* Objects
+						* Classes (yuk?)
+					4. Demo
+				</section>
+				<section>
+					<section data-markdown>
+						## What is typescript? 
+						A superset of JavaScript that enables static typechecking.
+					</section>
+					<section data-markdown>
+						Typescript does not add anything more than types to JavaScript!
+						```js
+						const barbarize = (text) => `${text}barbar`;
+						const foo = 'foo';
+						barbarize(foo) // foobarbar
+						```
+						Is equivalent to:
+						```
+						const barbarize = (text: string): string => ${text}barbar`;
+						const foo: string = 'foo';
+						barbarize(foo) // foobarbar
+						```
+					</section>
+					<section data-markdown>
+						## Why would we need types anyway?! :/
+						Because in JavaScript this can happen:
+						```
+						const user = {
+							name: req.body.name,
+							age: req.body.age,
+							surname: req.body.surname
+						};
+						const fullname = name + surname; // Jimnull
+						const accountExpiery = currentYear + user.age; // 201730
+						```
+					</section>
+					<section data-markdown>
+						Or this:
+						```
+						/**
+						 * @param apiRes              {Object}
+						 * @param apiRes.location     {String}
+						 * @param apiRes.instanceNo   {Number}
+						 * @param apiRes.user         {Object}
+						 * @param apiRes.user.name    {String}
+						 * @param apiRes.user.surname {String}
+						 * @param apiRes.user.age     {Number}
+						 */
+						const translateAPIResponse = (apiRes) => {}
+						```
+					</section>
+					<section data-markdown>
+						What if I deal with apiRes in another function:
+						```js
+						// insert a wiered hanging documentation here :(
+						/**
+						 * A response object sent from the api
+						 * @typedef {Object} apiRes
+						 * @param apiRes              {Object}
+						 * @param apiRes.location     {String}
+						 * @param apiRes.instanceNo   {Number}
+						 * @param apiRes.user         {Object}
+						 * @param apiRes.user.name    {String}
+						 * @param apiRes.user.surname {String}
+						 * @param apiRes.user.age     {Number}
+						 */
+
+						/**
+						 * @params {apiRes}
+						 */
+						const translateRes = (apiRes) => { };
+
+						/**
+						 * @params {apiRes}
+						 */
+						const sanitizeRes = (apiRes) => { };
+						```
+					</section>
+					<section data-markdown>
+						What if I want to reference `apiRes` in another file?
+						```
+						//anotherFile.js
+						/**
+						 * @params {apiRes}
+						 */
+						const sanitizeRes = (apiRes) => { };
+						```
+						The reader will not have a clue where `apiRes` was defined.
+					</section>
+					<section data-markdown>
+						ES6 object deconstruction?
+						```
+						const translateApiRes = ({ 
+							location: '', 
+							instanceNo: '', 
+							user: { 
+								name: '', 
+								surname: '', 
+								age: 18, 
+								meta: { 
+									pubKey, 
+									timestamp
+								} = {},
+								: 
+							} = {}
+						}) => {
+							// ...
+						};
+						```
+						Oh god my eyes hurt X(
+					</section>
+					<section data-markdown>
+						If you are using the a lightweight editor (such as sublime, atom or vs-code):
+						```
+						import logger from '../utils/logging';
+						
+						logger.log( // what are the arguments
+						```
+						autocompletion won't help.
+
+						Alternative: webstorm (buy a macbook pro because likely to crash often on a slow system)
+					</section>
+					<section>
+						(╯°□°）╯︵ ┻━┻
+					</section>
+				</section>
+				<section>
+					<section data-markdown>
+						## Getting Started with typescript
+						![typescript](./typescript.png)
+					</section>
+					<section data-markdown>
+						Installation
+						```
+						npm install -g typescript
+						```
+					</section>
+					<section data-markdown>
+						Project structure:
+						```
+						|-- src
+						|    |-- utils.js
+						|    |-- index.ts
+						|
+						|-- dist
+						|
+						|-- package.json
+						```
+						Compile and build:
+						```
+						>> tsc -p src --outDir dist
+						```
+					</section>
+					<section data-markdown>
+						To set full configuration create a file called `tsconfig.json` in your project root directory.
+						```json
+						{
+							"compilerOptions": {
+								"module": "CommonJs",
+								"noImplicitAny": false,
+								"removeComments": true,
+								"outDir": "./dist",
+								"sourceMap": true
+							},
+							"include": [
+								"src/**/*"
+							],
+							"exclude": [
+								"node_modules"
+							]
+						}
+						```
+						For a list of all configuration options look at 
+						[the official compiler options](https://www.typescriptlang.org/docs/handbook/compiler-options.html)
+					</section>
+				</section>
+				<section>
+					<section data-markdown>
+						## Language Tour
+						- Basic types
+						- Interfaces
+						- Functions
+						- Enums
+					</section>
+					<section data-markdown>
+						Basic Types
+						```
+						let text: string = 'abcdf';
+						let age: number = 12;
+						let canEdit: boolean = false;
+						let someUnkown: any;
+						let foo: void = undefined;
+						let nothing: undefined;
+						let bar: null = null;
+						```
+					</section>
+					<section data-markdown>
+						Type checking
+						```
+						let text: string = 'abcdf';
+
+						text = 2; // error
+
+						text = 'xyz'; // ok
+
+						text = `fancy ${text}`; //ok
+						```
+					</section>
+					<section data-markdown>
+						Arrays
+
+						```
+						let scores: number[] = [1, 2, 3];
+
+						let results: Array&lt;number&gt; = [10, 9, 3];
+						```
+					</section>
+					<section data-markdown>
+						Type inference
+						```
+						let name = 'Timmy';
+
+						const age = 20;
+
+						name = age; // error
+						```
+					</section>
+					<section data-markdown>
+						Interfaces
+						```
+						interface Person {
+							name: string;
+							surname: string;
+							age: number;
+							meta?: {   // ? makes it optional
+								hash: string;
+								pubKey: string;
+								timestamp: Date;
+							}
+						}
+						let pendar: Person = {name: 'pendar',age: 24,surname: 'G'};
+						pendar.city = 'London'; // error: Property city does not exist on type Person
+						```
+					</section>
+					<section data-markdown>
+						Functions
+						```
+						function verify (name: string): boolean {
+							return name.length > 10;
+						}
+
+						const reverse = (name: string): string => {
+							Array.prototype.slice.call(name).reverse().join();
+						};
+
+						let myFunction: (name: string) => string;
+						myFunction = reverse; // ok
+						myFunction = verify; // error
+						```
+					</section>
+					<section data-markdown>
+						Can bring sanity to the confusing `this` keyword.
+						```
+						function getPreviewButton (this: Factory) {
+							return this.selectButton(this.buttonId);
+						}
+						```
+					</section>
+					<section data-markdown>
+						Functions + Interfaces
+						```
+						const makePolicman = (person: Person): Policman => {
+							return Object.assign({}, person, {
+								rank: RANK.Inspector,
+								unit: UNIT.unit5
+							});	
+						}
+						```
+					</section>
+					<section data-markdown>
+						Enums
+						```
+						enum RANK {
+							Sergeant = 'Sergeant',
+							Inspector,
+							AssistantChiefConstable
+						}
+
+						enum Unit {
+							unit1: 1,
+							unit2
+							unit3 
+						}
+
+						policmane.rank = RANK.Inspector;
+						```
+					</section>
+					<section>
+
+					</section>
+				</section>
 			</div>
 		</div>
 
